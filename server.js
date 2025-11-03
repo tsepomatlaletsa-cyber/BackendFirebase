@@ -15,27 +15,22 @@ import {
 import db from "./firebase.js";
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 
-app.use(
-  cors({
-    origin: "https://movies-review-53dfa.web.app", 
-    credentials: true,
-  })
-);
 
-
-// ===================== REGISTER USER =====================
+// REGISTER USER
 app.post("/api/register", async (req, res) => {
   try {
     const { name, email, password, profilePic } = req.body;
 
+    // Check if email already exists
     const q = query(collection(db, "users"), where("email", "==", email));
     const snapshot = await getDocs(q);
-    if (!snapshot.empty)
-      return res.status(400).json({ error: "Email already exists" });
+    if (!snapshot.empty) return res.status(400).json({ error: "Email already exists" });
 
+    // Add new user
     const docRef = await addDoc(collection(db, "users"), {
       name,
       email,
@@ -51,20 +46,15 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-// ===================== LOGIN USER =====================
+// LOGIN USER
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const q = query(
-      collection(db, "users"),
-      where("email", "==", email),
-      where("password", "==", password)
-    );
+    const q = query(collection(db, "users"), where("email", "==", email), where("password", "==", password));
     const snapshot = await getDocs(q);
 
-    if (snapshot.empty)
-      return res.status(400).json({ error: "Invalid credentials" });
+    if (snapshot.empty) return res.status(400).json({ error: "Invalid credentials" });
 
     const user = snapshot.docs[0].data();
     const id = snapshot.docs[0].id;
@@ -75,6 +65,7 @@ app.post("/api/login", async (req, res) => {
     res.status(500).json({ error: "Failed to login user" });
   }
 });
+
 
 // ===================== MOVIES =====================
 app.get("/api/movies", async (req, res) => {
@@ -135,6 +126,7 @@ app.get("/api/users/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch user" });
   }
 });
+
 
 // ===================== REVIEWS =====================
 app.get("/api/reviews/:movieId", async (req, res) => {
