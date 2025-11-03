@@ -20,10 +20,11 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "movies-review-53dfa.web.app", 
+    origin: "https://movies-review-53dfa.web.app", 
     credentials: true,
   })
 );
+
 
 // ===================== REGISTER USER =====================
 app.post("/api/register", async (req, res) => {
