@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "https://movies-review-53dfa.web.app/", 
+    origin: "movies-review-53dfa.web.app", 
     credentials: true,
   })
 );
